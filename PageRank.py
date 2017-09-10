@@ -101,10 +101,12 @@ def main():
 
     #Se aplica el método de potencias para extraer el eigenVector de la matriz de transición
     #El eigenVector representa la importancia(relevancia) que tiene cada página web.
-    eigenVector = PowerMethod(matrizTransicion, 0.0001)
+    eigenVector = PowerMethod(matrizTransicion, 0.000001)
 
     #Se despliegan los resultados obtenidos, se conserva el mismo orden establecido en el archivo csv.
-    print(matrizTransicion)
+    suma = sum(eigenVector)
+    rank = [(i/suma)*100 for i in eigenVector]
+    print(rank)
 
 if __name__ == "__main__":
     main()

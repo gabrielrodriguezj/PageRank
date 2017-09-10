@@ -13,6 +13,7 @@ def csvAMatriz(archivoCSV):
     :param archivoCSV:
     :return (matriz que contiene las conexiones entre los nodos o páginas):
     '''
+    #Se lee el archivo y se convierte a forma matricial
     matriz = np.array([])
     i = 0
     for filaCSV in archivoCSV:
@@ -36,6 +37,13 @@ def csvAMatriz(archivoCSV):
                         fila.append(0)
             matriz = np.append([matriz], [fila])
     return np.matrix(matriz).reshape((i-1, i-1))
+
+    '''
+    #Estas líneas de código pueden servir para cargar el csv si no tuviera cabeceras
+    archivoDatos = np.loadtxt("Grafo1.csv")
+    print(archivoDatos)
+
+    '''
 
 def MatrizTransicionesAMatrizProbabilidades(matrizVinculos):
     '''
@@ -62,79 +70,72 @@ def MatrizDeTeletransportacion(n):
     return matrizTeletransportacion
 
 def PowerMethod(matriz, diferencia):
+    '''
+    Metodo de potencias que calcula el eigenVector asociado al eigenvalor más grande.
+    :param matriz:
+    :param diferencia:
+    :return:
+    '''
     n = matriz.shape[0]
     x = np.array([1]*n)
 
-    x = x[None, :]
+    x = x[: , None]
     xAnterior = x.copy()
 
     dif = 1
-
-    #print(matriz)
-    #print(x)
-
     while dif > diferencia:
-        #x = np.matmul(matriz, x)
+        x = np.matmul(matriz, x)
         #x = np.multiply(matriz*x.transpose())
-
-        x = matriz*x.transpose()
-
-
+        #x = matriz*x.transpose()
 
         norma = np.linalg.norm(x)
         x = x/norma
 
         error = x - xAnterior
-        error = np.dot(error, error.transpose())
+
+        error = np.dot(error.transpose(), error)
+
         error = np.sqrt(error)
         #error = math.sqrt(error)
 
         xAnterior = x.copy()
 
+        dif = error
 
     return x
 
 
 def main():
-    archivo = open("Grafo1.csv","r")
+    #Se abre el archivo csv con el titulo de cada página web
+    archivo = open("Ejemplos\Grafo1.csv","r")
     textoCSV = csv.reader(archivo, delimiter=',', skipinitialspace=False, strict=True)
     matrizVinculos = csvAMatriz(textoCSV)
 
     #Convertir matriz de los vínculos a matriz de probabilidades
     matrizProbabilidades = MatrizTransicionesAMatrizProbabilidades(matrizVinculos)
 
+    #Genera la matriz de teletransportación
     matrizTeletransportacion = MatrizDeTeletransportacion(matrizVinculos.shape[0])
 
+    #Factor de amortización.
     d = 0.85
 
+    #Matriz de transición que representa al conjunto de páginas web
     matrizTransicion = d*matrizProbabilidades + (1-d)*matrizTeletransportacion
 
+    #Se aplica el método de potencias para extraer el eigenVector de la matriz de transición
+    #El eigenVector representa la importancia(relevancia) que tiene cada página web.
     eigenVector = PowerMethod(matrizTransicion, 0.0001)
 
-    print(eigenVector)
-
-
-
+    #Se despliegan los resultados obtenidos, se conserva el mismo orden establecido en el archivo csv.
+    #eigenVector es una matriz. Para poder manipular y desplegar mejor los resultados
+    #se convierte a lista (previamente se transpone para convertir el vector columa
+    #a fila y sea más fácil manipular la lista)
+    eigenVectorLista = eigenVector.transpose().tolist()[0]
+    suma = sum(eigenVectorLista)
+    rank = [(i/suma)*100 for i in eigenVectorLista]
+    print(rank)
 
 
 if __name__ == "__main__":
     main()
-
-
-'''
-#Estas líneas de código pueden servir para cargar el csv si no tuviera cabeceras
-archivoDatos = np.loadtxt("Grafo1.csv")
-print(archivoDatos)
-
-'''
-
-'''
-el algoritmo de PageRank funciona bajo la siguiente idea:
-Se define una cadena de Markov que describe el comportamiento de la navegación por las páginas de internet.
-Se calcula la matriz de probablidades-transicion, la cual contiene la probabilidad de que al visitar cierta página web, navegue hacia otra página a través de los vinculos que contiene la página actual
-Se genera una matriz de teletransportación, que contiene las mismas dimensiones que la matriz de transiciones, pero todos los elementos son igual a 1/numero de páginas de internet. 
-    Esta matriz representa la posibilidad que "tiene un usuario" de saltar de una página a otra. Esto va ayudar a que el método de potencias converja.
-Se genera una matriz de transiciones que es igual a d*(Matriz de probabilidades) + (1-d)*(Matriz de teletransportacion). Donde d=0.85, el factor de amortizacion.
-Se calcula el eigenvector de la matriz de transiciones con el metodo de potencias. El vector que resulte contendrá las ponderaciones 
-    asignadas a las páginas web, entre más alto sea este valor, significa que la página tiene una mayor relevancia.
-'''
