@@ -107,7 +107,7 @@ def PowerMethod(matriz, diferencia):
 
 def main():
     #Se abre el archivo csv con el titulo de cada página web
-    archivo = open("Ejemplos\Grafo1.csv","r")
+    archivo = open("grafo.csv","r")
     textoCSV = csv.reader(archivo, delimiter=',', skipinitialspace=False, strict=True)
     matrizVinculos = csvAMatriz(textoCSV)
 

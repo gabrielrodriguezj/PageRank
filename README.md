@@ -21,3 +21,6 @@ Gabriel de Jesús Rodríguez Jordán
 
 ## Bibliografía:
 Coding The Matrix: Linear Algebra Through Computer Science Applications. Philip N. Klein.
+
+## Observaciones:
+Desarrollado con python 3

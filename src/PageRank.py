@@ -1,6 +1,6 @@
 import csv
 import copy
-from linealalgebra import *
+from algebralineal import *
 
 def csvAMatriz(archivoCSV):
     '''
@@ -83,7 +83,7 @@ def MatrizDeTransicion(d, matrizProbabilidades, matrizTeletransportacion):
 
 def main():
     #Se abre el archivo csv con el titulo de cada página web
-    archivo = open("Ejemplos\Grafo1.csv","r")
+    archivo = open("grafo.csv","r")
     textoCSV = csv.reader(archivo, delimiter=',', skipinitialspace=False, strict=True)
     matrizVinculos = csvAMatriz(textoCSV)
 

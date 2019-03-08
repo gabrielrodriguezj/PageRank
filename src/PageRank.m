@@ -2,7 +2,7 @@ clear;
 clc;
 
 %Leer el archivo csv, sin los encabezados de filas y columnas
-matrizVinculos = csvread('Ejemplos/Grafo1.csv',1,1);
+matrizVinculos = csvread('grafo.csv',1,1);
 
 %Por alguna extraña razón lee una columna o fila de más, la cual contiene
 %solamente 0's.
